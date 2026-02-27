@@ -395,7 +395,7 @@
 <header>
   <div class="logo-area">
     <h1>AI <span id="t-title-accent">Delegation</span><br><span id="t-title-main">Decision Tool</span></h1>
-    <p id="t-subtitle">Based on AI Fluency: Framework &amp; Foundations</p>
+    <p id="t-subtitle">Based on AI Fluency: Framework &amp; Foundations Training from Anthropic</p>
   </div>
   <div class="header-right">
     <div class="lang-toggle" role="group" aria-label="Language selector">
@@ -565,7 +565,7 @@
 </div>
 
 <script>
-// ── TRANSLATIONS ─────────────────────────────────────────────────────────────
+// ── TRANSLATIONS ──
 const T = {
   en: {
     "title-accent": "Delegation",
@@ -652,29 +652,29 @@ const T = {
     answeredOf: (a,t) => `${a} / ${t} answered`
   },
   vi: {
-    "title-accent": "Phân Công",
-    "title-main": "Công Cụ Quyết Định",
-    "subtitle": "Dựa trên khoá học AI Fluency: Framework & Foundations",
-    "leg-ai": "AI chủ đạo", "leg-collab": "Phối hợp", "leg-human": "Người chủ đạo", "leg-skip": "Không dùng AI",
+    "title-accent": "Khi Nào",
+    "title-main": "Nên Dùng AI",
+    "subtitle": "Dựa trên khoá học AI Fluency: Framework & Foundations từ Anthropic",
+    "leg-ai": "AI chủ đạo", "leg-collab": "Phối hợp", "leg-human": "Con người làm chính", "leg-skip": "Không dùng AI",
 
-    "p1-label": "Nhận Thức Vấn Đề",
-    "p1-title": "Xác định \"thành công\" trông như thế nào",
+    "p1-label": "Xác định vấn đề Vấn Đề",
+    "p1-title": "Biết rõ bạn muốn gì",
     "p1-desc": "Trước khi chọn công cụ, hãy hiểu rõ đích đến. Đầu vào mơ hồ → đầu ra mơ hồ.",
 
-    "q1": "Bạn có thể xác định rõ \"xong\" nghĩa là gì với nhiệm vụ này không?",
+    "q1": "Bạn xác định rõ \"hoàn thành\" nhiệm vụ này là như thế nào?",
     "q1a": "Rất rõ ràng — đầu ra cụ thể, tiêu chí đo lường được",
-    "q1b": "Khá rõ — biết hướng đi, còn một chút mơ hồ",
-    "q1c": "Chưa rõ — vẫn đang hình dung xem mình muốn gì",
-    "q1d": "Chưa biết — cần khám phá thêm trước",
+    "q1b": "Khá rõ — biết hướng đi, nhưng vẫn hơi mơ hồ",
+    "q1c": "Chưa rõ — vẫn đang nghĩ xem mình muốn gì",
+    "q1d": "Chưa biết — cần suy nghĩ thêm",
 
     "q2": "Nhiệm vụ này chủ yếu đòi hỏi kiểu tư duy nào?",
-    "q2a": "Nhận dạng mẫu, tổng hợp, hoặc soạn thảo",
+    "q2a": "Nhận dạng mẫu (pattern), tổng hợp, hoặc soạn thảo",
     "q2b": "Kết hợp phân tích + phán đoán sáng tạo",
     "q2c": "Chuyên môn sâu hoặc kinh nghiệm thực tế cá nhân",
-    "q2d": "Quan hệ, niềm tin, hoặc trí tuệ cảm xúc",
+    "q2d": "Mối quan hệ, sự tin tưởng, hoặc trí tuệ cảm xúc",
 
-    "p2-label": "Nhận Thức Nền Tảng AI",
-    "p2-title": "Chọn đúng mô hình AI cho nhiệm vụ",
+    "p2-label": "Chọn Mô Hình AI",
+    "p2-title": "Chọn đúng mô hình AI cho nhiệm vụ của bạn",
     "p2-desc": "Không phải lúc nào cũng cần dùng mô hình mạnh nhất. Chọn thông minh giúp tiết kiệm thời gian và dung lượng.",
 
     "q3": "Nhiệm vụ này đòi hỏi mức độ suy luận sâu đến đâu?",
@@ -683,15 +683,15 @@ const T = {
     "q3c": "Phức tạp — lý luận sâu, nội dung dài (→ Opus)",
     "q3d": "Cần dữ liệu thực tế / tìm kiếm / công cụ bên ngoài",
 
-    "q4": "AI có am hiểu thông tin mà nhiệm vụ này dựa vào không?",
-    "q4a": "Có — kiến thức phổ quát, tài liệu rộng rãi",
-    "q4b": "Một phần — AI biết lĩnh vực nhưng không biết đặc thù của tôi",
-    "q4c": "Không — thông tin nội bộ, độc quyền, hoặc rất mới",
+    "q4": "AI có kiến thức/ kỹ năng để làm nhiệm vụ này không?",
+    "q4a": "Có — kiến thức phổ quát, tài liệu phổ biến rộng rãi",
+    "q4b": "Một phần — AI biết lĩnh vực này nhưng không hiểu đặc thù công việc của tôi",
+    "q4c": "Không — thông tin nội bộ, độc quyền, hoặc rất mới mà AI chưa biết",
     "q4d": "Cần dữ liệu được kiểm chứng, sai là rủi ro cao",
 
     "p3-label": "Phân Công Nhiệm Vụ",
     "p3-title": "Quyết định ai làm gì",
-    "p3-desc": "Câu hỏi cốt lõi: tự động hoá, tăng cường, hay giữ nguyên cho con người?",
+    "p3-desc": "Câu hỏi cốt lõi: tự động hoá, tăng cường, hay bạn tự làm?",
 
     "q5": "Nếu AI mắc lỗi trong nhiệm vụ này, hậu quả như thế nào?",
     "q5a": "Thấp — dễ phát hiện và sửa, ít ảnh hưởng",
@@ -701,36 +701,36 @@ const T = {
 
     "q6": "AI tạo ra giá trị lớn nhất ở điểm nào trong nhiệm vụ này?",
     "q6a": "Tự động hoàn toàn — công việc lặp đi lặp lại, theo mẫu",
-    "q6b": "Tăng cường — AI soạn thảo, người tinh chỉnh và phán xét",
-    "q6c": "Chỉ cần ý tưởng — người làm chính, AI gợi ý",
-    "q6d": "Không có giá trị — giọng văn và phán đoán cá nhân mới là điểm cốt lõi",
+    "q6b": "Tăng cường — AI soạn thảo, bạn tinh chỉnh và phán xét",
+    "q6c": "Chỉ cần ý tưởng — bạn làm chính, AI gợi ý",
+    "q6d": "Không có giá trị — giọng văn và phong cách, phán đoán cá nhân mới là điểm cốt lõi",
 
     "q7": "Nhiệm vụ này có yêu cầu điều mà AI về cơ bản không thể làm được không?",
-    "q7a": "Không — chủ yếu là xử lý, soạn thảo, hoặc cấu trúc hoá",
-    "q7b": "Phần nào — cần gu thẩm mỹ của người, nhưng AI lo phần nặng",
+    "q7a": "Không — chủ yếu là xử lý, soạn thảo, hoặc cấu trúc văn bản, nội dung",
+    "q7b": "Một phần — cần gu thẩm mỹ của bạn, nhưng AI lo phần nặng",
     "q7c": "Có — cần quan hệ thực, trách nhiệm giải trình, hoặc ngữ cảnh sâu",
-    "q7d": "Có — biểu đạt chân thực của con người mới là giá trị cốt lõi",
+    "q7d": "Có — biểu đạt chân thực của bạn mới là giá trị cốt lõi",
 
     "matrix-label": "Khung Phân Công",
     "matrix-title": "4 chế độ làm việc cùng AI",
     "matrix-sub": "Dùng phần này làm tham chiếu khi lập kế hoạch nhiệm vụ trong dự án.",
     "m1-title": "AI chủ đạo / Tự động hoá",
-    "m1-desc": "Nhiệm vụ lặp đi lặp lại, theo mẫu, hoặc khối lượng lớn. AI xử lý từ đầu đến cuối, người kiểm tra nhẹ. Ví dụ: định dạng, tóm tắt, dịch thuật, bản nháp đầu tiên.",
+    "m1-desc": "Nhiệm vụ lặp đi lặp lại, theo mẫu, hoặc khối lượng lớn. AI xử lý từ đầu đến cuối, bạn kiểm tra nhẹ. Ví dụ: định dạng, tóm tắt, dịch thuật, bản nháp đầu tiên.",
     "m2-title": "Phối hợp / Tăng cường",
-    "m2-desc": "AI tạo ra, người phán xét và tinh chỉnh. Phù hợp nhất khi cần chuyên môn sâu + sức mạnh của AI. Ví dụ: tổng hợp nghiên cứu, bản thảo chiến lược, nội dung cần giọng riêng.",
-    "m3-title": "Người chủ đạo / AI hỗ trợ",
-    "m3-desc": "Người làm công việc cốt lõi; AI cung cấp hỗ trợ, ý tưởng hoặc kiểm tra. Ví dụ: quyết định quan hệ, sáng tạo độc đáo, việc cần kinh nghiệm sống hoặc trách nhiệm cá nhân.",
-    "m4-title": "Chỉ con người / Không dùng AI",
-    "m4-desc": "AI sẽ làm giảm chất lượng. Giọng văn cá nhân, quyết định đạo đức, phán đoán rủi ro cao, hoặc khi sai lầm của AI là không thể chấp nhận.",
+    "m2-desc": "AI thiế kế, bạn nhận xét và tinh chỉnh. Phù hợp nhất khi cần chuyên môn sâu của bạn + sức mạnh của AI. Ví dụ: tổng hợp nghiên cứu, bản thảo chiến lược, nội dung cần giọng riêng.",
+    "m3-title": "Bạn làm chính / AI hỗ trợ",
+    "m3-desc": "Bạn làm công việc cốt lõi; AI cung cấp hỗ trợ, ý tưởng hoặc kiểm tra. Ví dụ: quyết định mối quan hệ, sáng tạo độc đáo, việc cần kinh nghiệm sống hoặc trách nhiệm cá nhân.",
+    "m4-title": "Bạn tự làm / Không dùng AI",
+    "m4-desc": "AI sẽ làm giảm chất lượng. Giọng văn cá nhân, quyết định đạo đức, phán đoán rủi ro cao, hoặc khi AI làm sai là không thể chấp nhận.",
 
     "score-label": "Điểm",
     "reset-btn": "↺ Làm lại",
-    verdictDefault: ["Hãy trả lời các câu hỏi trên", "Đi qua cả 3 giai đoạn để nhận khuyến nghị phân công của bạn."],
+    verdictDefault: ["Hãy trả lời các câu hỏi trên", "Làm cả 3 phần để nhận gợi ý."],
     verdicts: {
-      ai:     ["⚡ AI chủ đạo — Tự động hoá đi",         "Độ tin cậy cao. AI xử lý tốt. Dùng mô hình phù hợp — thường là Sonnet hoặc Haiku. Đặt ràng buộc rõ ràng và kiểm tra đầu ra."],
+      ai:     ["⚡ AI chủ đạo — Tự động hoá đi!",         "Độ tin cậy cao. AI xử lý tốt. Dùng mô hình phù hợp — thường là Sonnet hoặc Haiku. Đặt ràng buộc rõ ràng và kiểm tra đầu ra."],
       collab: ["🤝 Phối hợp — AI soạn, bạn tinh chỉnh",  "AI tạo ra giá trị rõ ràng nhưng phán đoán của bạn rất quan trọng. Để AI làm phần nặng, rồi áp dụng chuyên môn của bạn. Dành thêm thời gian review."],
-      human:  ["🧠 Người chủ đạo — AI chỉ hỗ trợ",       "Bạn nắm quyền. AI có thể gợi ý hoặc kiểm tra, nhưng tư duy và quyết định là của bạn. Dùng AI có chừng mực và kiểm chứng mọi thứ."],
-      skip:   ["🚫 Chỉ con người — Đừng dùng AI ở đây",  "AI sẽ làm giảm chất lượng hoặc tạo ra rủi ro không thể chấp nhận. Tự làm. Đây là nơi giá trị không thể thay thế của bạn toả sáng."]
+      human:  ["🧠 Bạn làm chính — AI chỉ hỗ trợ",       "Bạn nắm quyền. AI có thể gợi ý hoặc kiểm tra, nhưng tư duy và quyết định là của bạn. Dùng AI có chừng mực và kiểm chứng mọi thứ."],
+      skip:   ["🚫 Bạn tự làm — Đừng dùng AI",  "AI sẽ làm giảm chất lượng hoặc tạo ra rủi ro không thể chấp nhận. Tự làm đi! Đây là nơi giá trị không thể thay thế của bạn toả sáng."]
     },
     remaining: n => `(còn ${n} câu hỏi)`,
     answeredOf: (a,t) => `${a} / ${t} đã trả lời`
