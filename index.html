@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Delegation Matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --accent: #e8ff47;
+    --text: #f0f0f0;
+    --muted: #666;
+    --human: #ff9f47;
+    --collab: #47c8ff;
+    --ai: #a8ff78;
+    --skip: #ff6b6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body.lang-vi {
+    font-family: 'Be Vietnam Pro', sans-serif;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  header {
+    padding: 3rem 4rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .logo-area h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .logo-area h1 span { color: var(--accent); }
+
+  .logo-area p {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .lang-toggle {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .lang-btn:not(.active):hover {
+    background: #1f1f1f;
+    color: var(--text);
+  }
+
+  .lang-divider {
+    width: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .phase {
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .phase.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .phase-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .phase-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  body.lang-vi .phase-title {
+    font-family: 'Be Vietnam Pro', sans-serif;
+  }
+
+  .phase-desc {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .question-group { display: grid; gap: 0.75rem; }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    transition: border-color 0.2s;
+  }
+
+  .question-card:hover { border-color: #3a3a3a; }
+
+  .question-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  body.lang-vi .question-text {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 700;
+    font-size: 0.98rem;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .option-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.65rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    text-align: left;
+    line-height: 1.45;
+  }
+
+  body.lang-vi .option-btn {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .option-btn:hover { border-color: #555; background: #1f1f1f; }
+
+  .option-btn[data-score="2"].selected  { border-color: var(--ai);    background: rgba(168,255,120,0.08); color: var(--ai); }
+  .option-btn[data-score="1"].selected  { border-color: var(--collab); background: rgba(71,200,255,0.08);  color: var(--collab); }
+  .option-btn[data-score="0"].selected  { border-color: var(--human);  background: rgba(255,159,71,0.08);  color: var(--human); }
+  .option-btn[data-score="-1"].selected { border-color: var(--skip);   background: rgba(255,107,107,0.08); color: var(--skip); }
+
+  #result-panel {
+    position: sticky;
+    bottom: 0;
+    background: #111;
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    z-index: 100;
+  }
+
+  .progress-bar { width: 100%; height: 3px; background: var(--border); position: absolute; top: 0; left: 0; }
+  .progress-fill { height: 100%; transition: width 0.4s ease, background 0.3s; width: 0%; }
+
+  .score-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    min-width: 3ch;
+    transition: color 0.3s;
+  }
+
+  .score-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .verdict-box { flex: 1; min-width: 200px; }
+
+  .verdict-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    transition: color 0.3s;
+  }
+
+  body.lang-vi .verdict-title {
+    font-family: 'Be Vietnam Pro', sans-serif;
+  }
+
+  .verdict-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  body.lang-vi .verdict-desc {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 0.82rem;
+  }
+
+  .answered-count {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .reset-btn:hover { border-color: #555; color: var(--text); }
+
+  .matrix-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 1.5rem;
+  }
+
+  .matrix-cell { background: var(--surface); padding: 1.25rem; }
+  .matrix-cell .cell-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+
+  .matrix-cell h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  body.lang-vi .matrix-cell h3 {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .matrix-cell p { font-size: 0.72rem; color: var(--muted); line-height: 1.65; }
+
+  body.lang-vi .matrix-cell p {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 0.8rem;
+  }
+
+  .matrix-cell.human h3   { color: var(--human); }
+  .matrix-cell.collab h3  { color: var(--collab); }
+  .matrix-cell.ai-lead h3 { color: var(--ai); }
+  .matrix-cell.skip h3    { color: var(--skip); }
+
+  /* Fade transition on lang switch */
+  .lang-fade { transition: opacity 0.15s ease; }
+  .lang-fade.fading { opacity: 0; }
+
+  @media (max-width: 600px) {
+    header { padding: 2rem 1.5rem 1.5rem; }
+    .container { padding: 2rem 1.5rem; }
+    #result-panel { padding: 1rem 1.5rem; gap: 1rem; }
+    .header-right { align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <h1>AI <span id="t-title-accent">Delegation</span><br><span id="t-title-main">Decision Tool</span></h1>
+    <p id="t-subtitle">Based on AI Fluency: Framework &amp; Foundations</p>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle" role="group" aria-label="Language selector">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">ENG</button>
+      <div class="lang-divider"></div>
+      <button class="lang-btn" id="btn-vi" onclick="setLang('vi')">VIE</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="dot" style="background:var(--ai)"></div><span id="t-leg-ai">AI-led</span></div>
+      <div class="legend-item"><div class="dot" style="background:var(--collab)"></div><span id="t-leg-collab">Collaborate</span></div>
+      <div class="legend-item"><div class="dot" style="background:var(--human)"></div><span id="t-leg-human">Human-led</span></div>
+      <div class="legend-item"><div class="dot" style="background:var(--skip)"></div><span id="t-leg-skip">Skip AI</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Phase 1 -->
+  <div class="phase" id="phase-1">
+    <div class="phase-label">Phase 01 — <span id="t-p1-label">Problem Awareness</span></div>
+    <h2 class="phase-title" id="t-p1-title">Define what success looks like</h2>
+    <p class="phase-desc" id="t-p1-desc">Before choosing a tool, understand your destination. Vague inputs → vague outputs.</p>
+    <div class="question-group">
+
+      <div class="question-card">
+        <div class="question-text" id="t-q1">How clearly can you define what "done" looks like for this task?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q1" id="t-q1a">Crystal clear — specific output, measurable criteria</button>
+          <button class="option-btn" data-score="1" data-q="q1" id="t-q1b">Mostly clear — know the direction, some ambiguity</button>
+          <button class="option-btn" data-score="0" data-q="q1" id="t-q1c">Fuzzy — still figuring out what I want</button>
+          <button class="option-btn" data-score="-1" data-q="q1" id="t-q1d">Unknown — need to explore first</button>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="t-q2">What type of thinking does this task primarily require?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q2" id="t-q2a">Pattern recognition, synthesis, or drafting</button>
+          <button class="option-btn" data-score="1" data-q="q2" id="t-q2b">A mix of analysis + creative judgment</button>
+          <button class="option-btn" data-score="0" data-q="q2" id="t-q2c">Deep domain expertise or lived experience</button>
+          <button class="option-btn" data-score="-1" data-q="q2" id="t-q2d">Relationship, trust, or emotional intelligence</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase" id="phase-2">
+    <div class="phase-label">Phase 02 — <span id="t-p2-label">Platform Awareness</span></div>
+    <h2 class="phase-title" id="t-p2-title">Match task to the right AI model</h2>
+    <p class="phase-desc" id="t-p2-desc">Not every task needs the most powerful model. Choosing wisely saves time and capacity.</p>
+    <div class="question-group">
+
+      <div class="question-card">
+        <div class="question-text" id="t-q3">How much reasoning depth does this task require?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q3" id="t-q3a">Simple — quick answer, short output (→ Haiku)</button>
+          <button class="option-btn" data-score="2" data-q="q3" id="t-q3b">Moderate — structured content, analysis (→ Sonnet)</button>
+          <button class="option-btn" data-score="1" data-q="q3" id="t-q3c">Complex — deep reasoning, long-form (→ Opus)</button>
+          <button class="option-btn" data-score="0" data-q="q3" id="t-q3d">Needs real-world data / search / tools</button>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="t-q4">Is the information this task relies on something AI would know well?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q4" id="t-q4a">Yes — general knowledge, widely documented patterns</button>
+          <button class="option-btn" data-score="1" data-q="q4" id="t-q4b">Partially — AI knows the domain but not my specifics</button>
+          <button class="option-btn" data-score="0" data-q="q4" id="t-q4c">No — proprietary, internal, or very recent info</button>
+          <button class="option-btn" data-score="-1" data-q="q4" id="t-q4d">Requires verified facts where errors are high-risk</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase" id="phase-3">
+    <div class="phase-label">Phase 03 — <span id="t-p3-label">Task Delegation</span></div>
+    <h2 class="phase-title" id="t-p3-title">Decide who does what</h2>
+    <p class="phase-desc" id="t-p3-desc">The core question: automate, augment, or keep it human?</p>
+    <div class="question-group">
+
+      <div class="question-card">
+        <div class="question-text" id="t-q5">If AI makes an error on this task, what's the impact?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q5" id="t-q5a">Low — easy to catch and correct, low stakes</button>
+          <button class="option-btn" data-score="1" data-q="q5" id="t-q5b">Medium — fixable but requires careful review</button>
+          <button class="option-btn" data-score="0" data-q="q5" id="t-q5c">High — significant rework or credibility risk</button>
+          <button class="option-btn" data-score="-1" data-q="q5" id="t-q5d">Critical — safety, legal, financial, or ethical risk</button>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="t-q6">Where would AI create the most value for this task?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q6" id="t-q6a">Full automation — repetitive, templated, or formulaic work</button>
+          <button class="option-btn" data-score="1" data-q="q6" id="t-q6b">Augmentation — AI drafts, human refines and judges</button>
+          <button class="option-btn" data-score="0" data-q="q6" id="t-q6c">Inspiration only — human creates, AI offers ideas</button>
+          <button class="option-btn" data-score="-1" data-q="q6" id="t-q6d">No value — personal voice or judgment is the whole point</button>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="t-q7">Does this task require things AI fundamentally can't do?</div>
+        <div class="options">
+          <button class="option-btn" data-score="2" data-q="q7" id="t-q7a">No — it's mostly processing, drafting, or structuring</button>
+          <button class="option-btn" data-score="1" data-q="q7" id="t-q7b">Somewhat — needs human taste, but AI handles heavy lifting</button>
+          <button class="option-btn" data-score="0" data-q="q7" id="t-q7c">Yes — needs real relationships, accountability, or context</button>
+          <button class="option-btn" data-score="-1" data-q="q7" id="t-q7d">Yes — authentic human expression is the core value</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Matrix Reference -->
+  <div class="matrix-section">
+    <div class="phase-label" style="opacity:1"><span id="t-matrix-label">Delegation Framework</span></div>
+    <h2 class="phase-title" id="t-matrix-title" style="font-size:1.5rem;margin-bottom:0.5rem">The 4 modes of working with AI</h2>
+    <p style="color:var(--muted);font-size:0.82rem;line-height:1.7;margin-bottom:0" id="t-matrix-sub">Use this as a reference when planning tasks in your project.</p>
+    <div class="matrix-grid">
+      <div class="matrix-cell ai-lead">
+        <div class="cell-icon">⚡</div>
+        <h3 id="t-m1-title">AI-Led / Automate</h3>
+        <p id="t-m1-desc">Routine, templated, or high-volume tasks. AI handles end-to-end with light human review. Examples: formatting, summarising, translating, first drafts of structured content.</p>
+      </div>
+      <div class="matrix-cell collab">
+        <div class="cell-icon">🤝</div>
+        <h3 id="t-m2-title">Collaborate / Augment</h3>
+        <p id="t-m2-desc">AI generates, human judges and refines. Best for tasks requiring domain expertise + AI scale. Examples: research synthesis, strategy drafts, content that needs your voice.</p>
+      </div>
+      <div class="matrix-cell human">
+        <div class="cell-icon">🧠</div>
+        <h3 id="t-m3-title">Human-Led / Assisted</h3>
+        <p id="t-m3-desc">Human does the core work; AI provides support, ideas, or checking. Examples: relationship decisions, novel creative work, tasks needing lived experience or accountability.</p>
+      </div>
+      <div class="matrix-cell skip">
+        <div class="cell-icon">🚫</div>
+        <h3 id="t-m4-title">Human Only / Skip AI</h3>
+        <p id="t-m4-desc">AI would subtract value. Authentic personal voice, ethical decisions, high-stakes judgment calls, or tasks where AI errors carry unacceptable risk.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sticky result -->
+<div id="result-panel">
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <div>
+      <div class="score-number" id="score-display">—</div>
+      <div class="score-label" id="t-score-label">Score</div>
+    </div>
+  </div>
+  <div class="verdict-box">
+    <div class="verdict-title" id="verdict-title">Answer questions above</div>
+    <div class="verdict-desc" id="verdict-desc">Work through all three phases to get your delegation recommendation.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+    <div class="answered-count" id="answered-count">0 / 7</div>
+    <button class="reset-btn" id="t-reset-btn" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<script>
+// ── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    "title-accent": "Delegation",
+    "title-main": "Decision Tool",
+    "subtitle": "Based on AI Fluency: Framework & Foundations",
+    "leg-ai": "AI-led", "leg-collab": "Collaborate", "leg-human": "Human-led", "leg-skip": "Skip AI",
+
+    "p1-label": "Problem Awareness",
+    "p1-title": "Define what success looks like",
+    "p1-desc": "Before choosing a tool, understand your destination. Vague inputs → vague outputs.",
+
+    "q1": "How clearly can you define what \"done\" looks like for this task?",
+    "q1a": "Crystal clear — specific output, measurable criteria",
+    "q1b": "Mostly clear — know the direction, some ambiguity",
+    "q1c": "Fuzzy — still figuring out what I want",
+    "q1d": "Unknown — need to explore first",
+
+    "q2": "What type of thinking does this task primarily require?",
+    "q2a": "Pattern recognition, synthesis, or drafting",
+    "q2b": "A mix of analysis + creative judgment",
+    "q2c": "Deep domain expertise or lived experience",
+    "q2d": "Relationship, trust, or emotional intelligence",
+
+    "p2-label": "Platform Awareness",
+    "p2-title": "Match task to the right AI model",
+    "p2-desc": "Not every task needs the most powerful model. Choosing wisely saves time and capacity.",
+
+    "q3": "How much reasoning depth does this task require?",
+    "q3a": "Simple — quick answer, short output (→ Haiku)",
+    "q3b": "Moderate — structured content, analysis (→ Sonnet)",
+    "q3c": "Complex — deep reasoning, long-form (→ Opus)",
+    "q3d": "Needs real-world data / search / tools",
+
+    "q4": "Is the information this task relies on something AI would know well?",
+    "q4a": "Yes — general knowledge, widely documented patterns",
+    "q4b": "Partially — AI knows the domain but not my specifics",
+    "q4c": "No — proprietary, internal, or very recent info",
+    "q4d": "Requires verified facts where errors are high-risk",
+
+    "p3-label": "Task Delegation",
+    "p3-title": "Decide who does what",
+    "p3-desc": "The core question: automate, augment, or keep it human?",
+
+    "q5": "If AI makes an error on this task, what's the impact?",
+    "q5a": "Low — easy to catch and correct, low stakes",
+    "q5b": "Medium — fixable but requires careful review",
+    "q5c": "High — significant rework or credibility risk",
+    "q5d": "Critical — safety, legal, financial, or ethical risk",
+
+    "q6": "Where would AI create the most value for this task?",
+    "q6a": "Full automation — repetitive, templated, or formulaic work",
+    "q6b": "Augmentation — AI drafts, human refines and judges",
+    "q6c": "Inspiration only — human creates, AI offers ideas",
+    "q6d": "No value — personal voice or judgment is the whole point",
+
+    "q7": "Does this task require things AI fundamentally can't do?",
+    "q7a": "No — it's mostly processing, drafting, or structuring",
+    "q7b": "Somewhat — needs human taste, but AI handles heavy lifting",
+    "q7c": "Yes — needs real relationships, accountability, or context",
+    "q7d": "Yes — authentic human expression is the core value",
+
+    "matrix-label": "Delegation Framework",
+    "matrix-title": "The 4 modes of working with AI",
+    "matrix-sub": "Use this as a reference when planning tasks in your project.",
+    "m1-title": "AI-Led / Automate",
+    "m1-desc": "Routine, templated, or high-volume tasks. AI handles end-to-end with light human review. Examples: formatting, summarising, translating, first drafts of structured content.",
+    "m2-title": "Collaborate / Augment",
+    "m2-desc": "AI generates, human judges and refines. Best for tasks requiring domain expertise + AI scale. Examples: research synthesis, strategy drafts, content that needs your voice.",
+    "m3-title": "Human-Led / Assisted",
+    "m3-desc": "Human does the core work; AI provides support, ideas, or checking. Examples: relationship decisions, novel creative work, tasks needing lived experience or accountability.",
+    "m4-title": "Human Only / Skip AI",
+    "m4-desc": "AI would subtract value. Authentic personal voice, ethical decisions, high-stakes judgment calls, or tasks where AI errors carry unacceptable risk.",
+
+    "score-label": "Score",
+    "reset-btn": "↺ Reset",
+    verdictDefault: ["Answer questions above", "Work through all three phases to get your delegation recommendation."],
+    verdicts: {
+      ai:     ["⚡ AI-Led — Automate it",           "High confidence. AI handles this well. Use the most efficient model — often Sonnet or Haiku. Set clear constraints and review the output."],
+      collab: ["🤝 Collaborate — AI drafts, you refine", "AI adds clear value but your judgment matters. Let AI do the heavy lifting, then apply your expertise. Plan extra review time."],
+      human:  ["🧠 Human-Led — AI assists only",    "You're in charge. AI can offer ideas or check your work, but the thinking and decisions are yours. Use AI lightly and verify everything."],
+      skip:   ["🚫 Human Only — Skip AI here",      "AI would reduce quality or introduce unacceptable risk. Do it yourself. This is where your irreplaceable value lives."]
+    },
+    remaining: n => `(${n} question${n > 1 ? 's' : ''} remaining)`,
+    answeredOf: (a,t) => `${a} / ${t} answered`
+  },
+  vi: {
+    "title-accent": "Phân Công",
+    "title-main": "Công Cụ Quyết Định",
+    "subtitle": "Dựa trên khoá học AI Fluency: Framework & Foundations",
+    "leg-ai": "AI chủ đạo", "leg-collab": "Phối hợp", "leg-human": "Người chủ đạo", "leg-skip": "Không dùng AI",
+
+    "p1-label": "Nhận Thức Vấn Đề",
+    "p1-title": "Xác định \"thành công\" trông như thế nào",
+    "p1-desc": "Trước khi chọn công cụ, hãy hiểu rõ đích đến. Đầu vào mơ hồ → đầu ra mơ hồ.",
+
+    "q1": "Bạn có thể xác định rõ \"xong\" nghĩa là gì với nhiệm vụ này không?",
+    "q1a": "Rất rõ ràng — đầu ra cụ thể, tiêu chí đo lường được",
+    "q1b": "Khá rõ — biết hướng đi, còn một chút mơ hồ",
+    "q1c": "Chưa rõ — vẫn đang hình dung xem mình muốn gì",
+    "q1d": "Chưa biết — cần khám phá thêm trước",
+
+    "q2": "Nhiệm vụ này chủ yếu đòi hỏi kiểu tư duy nào?",
+    "q2a": "Nhận dạng mẫu, tổng hợp, hoặc soạn thảo",
+    "q2b": "Kết hợp phân tích + phán đoán sáng tạo",
+    "q2c": "Chuyên môn sâu hoặc kinh nghiệm thực tế cá nhân",
+    "q2d": "Quan hệ, niềm tin, hoặc trí tuệ cảm xúc",
+
+    "p2-label": "Nhận Thức Nền Tảng AI",
+    "p2-title": "Chọn đúng mô hình AI cho nhiệm vụ",
+    "p2-desc": "Không phải lúc nào cũng cần dùng mô hình mạnh nhất. Chọn thông minh giúp tiết kiệm thời gian và dung lượng.",
+
+    "q3": "Nhiệm vụ này đòi hỏi mức độ suy luận sâu đến đâu?",
+    "q3a": "Đơn giản — trả lời nhanh, đầu ra ngắn (→ Haiku)",
+    "q3b": "Trung bình — nội dung có cấu trúc, phân tích (→ Sonnet)",
+    "q3c": "Phức tạp — lý luận sâu, nội dung dài (→ Opus)",
+    "q3d": "Cần dữ liệu thực tế / tìm kiếm / công cụ bên ngoài",
+
+    "q4": "AI có am hiểu thông tin mà nhiệm vụ này dựa vào không?",
+    "q4a": "Có — kiến thức phổ quát, tài liệu rộng rãi",
+    "q4b": "Một phần — AI biết lĩnh vực nhưng không biết đặc thù của tôi",
+    "q4c": "Không — thông tin nội bộ, độc quyền, hoặc rất mới",
+    "q4d": "Cần dữ liệu được kiểm chứng, sai là rủi ro cao",
+
+    "p3-label": "Phân Công Nhiệm Vụ",
+    "p3-title": "Quyết định ai làm gì",
+    "p3-desc": "Câu hỏi cốt lõi: tự động hoá, tăng cường, hay giữ nguyên cho con người?",
+
+    "q5": "Nếu AI mắc lỗi trong nhiệm vụ này, hậu quả như thế nào?",
+    "q5a": "Thấp — dễ phát hiện và sửa, ít ảnh hưởng",
+    "q5b": "Trung bình — có thể sửa nhưng cần kiểm tra kỹ",
+    "q5c": "Cao — phải làm lại nhiều hoặc ảnh hưởng uy tín",
+    "q5d": "Nghiêm trọng — rủi ro an toàn, pháp lý, tài chính, hoặc đạo đức",
+
+    "q6": "AI tạo ra giá trị lớn nhất ở điểm nào trong nhiệm vụ này?",
+    "q6a": "Tự động hoàn toàn — công việc lặp đi lặp lại, theo mẫu",
+    "q6b": "Tăng cường — AI soạn thảo, người tinh chỉnh và phán xét",
+    "q6c": "Chỉ cần ý tưởng — người làm chính, AI gợi ý",
+    "q6d": "Không có giá trị — giọng văn và phán đoán cá nhân mới là điểm cốt lõi",
+
+    "q7": "Nhiệm vụ này có yêu cầu điều mà AI về cơ bản không thể làm được không?",
+    "q7a": "Không — chủ yếu là xử lý, soạn thảo, hoặc cấu trúc hoá",
+    "q7b": "Phần nào — cần gu thẩm mỹ của người, nhưng AI lo phần nặng",
+    "q7c": "Có — cần quan hệ thực, trách nhiệm giải trình, hoặc ngữ cảnh sâu",
+    "q7d": "Có — biểu đạt chân thực của con người mới là giá trị cốt lõi",
+
+    "matrix-label": "Khung Phân Công",
+    "matrix-title": "4 chế độ làm việc cùng AI",
+    "matrix-sub": "Dùng phần này làm tham chiếu khi lập kế hoạch nhiệm vụ trong dự án.",
+    "m1-title": "AI chủ đạo / Tự động hoá",
+    "m1-desc": "Nhiệm vụ lặp đi lặp lại, theo mẫu, hoặc khối lượng lớn. AI xử lý từ đầu đến cuối, người kiểm tra nhẹ. Ví dụ: định dạng, tóm tắt, dịch thuật, bản nháp đầu tiên.",
+    "m2-title": "Phối hợp / Tăng cường",
+    "m2-desc": "AI tạo ra, người phán xét và tinh chỉnh. Phù hợp nhất khi cần chuyên môn sâu + sức mạnh của AI. Ví dụ: tổng hợp nghiên cứu, bản thảo chiến lược, nội dung cần giọng riêng.",
+    "m3-title": "Người chủ đạo / AI hỗ trợ",
+    "m3-desc": "Người làm công việc cốt lõi; AI cung cấp hỗ trợ, ý tưởng hoặc kiểm tra. Ví dụ: quyết định quan hệ, sáng tạo độc đáo, việc cần kinh nghiệm sống hoặc trách nhiệm cá nhân.",
+    "m4-title": "Chỉ con người / Không dùng AI",
+    "m4-desc": "AI sẽ làm giảm chất lượng. Giọng văn cá nhân, quyết định đạo đức, phán đoán rủi ro cao, hoặc khi sai lầm của AI là không thể chấp nhận.",
+
+    "score-label": "Điểm",
+    "reset-btn": "↺ Làm lại",
+    verdictDefault: ["Hãy trả lời các câu hỏi trên", "Đi qua cả 3 giai đoạn để nhận khuyến nghị phân công của bạn."],
+    verdicts: {
+      ai:     ["⚡ AI chủ đạo — Tự động hoá đi",         "Độ tin cậy cao. AI xử lý tốt. Dùng mô hình phù hợp — thường là Sonnet hoặc Haiku. Đặt ràng buộc rõ ràng và kiểm tra đầu ra."],
+      collab: ["🤝 Phối hợp — AI soạn, bạn tinh chỉnh",  "AI tạo ra giá trị rõ ràng nhưng phán đoán của bạn rất quan trọng. Để AI làm phần nặng, rồi áp dụng chuyên môn của bạn. Dành thêm thời gian review."],
+      human:  ["🧠 Người chủ đạo — AI chỉ hỗ trợ",       "Bạn nắm quyền. AI có thể gợi ý hoặc kiểm tra, nhưng tư duy và quyết định là của bạn. Dùng AI có chừng mực và kiểm chứng mọi thứ."],
+      skip:   ["🚫 Chỉ con người — Đừng dùng AI ở đây",  "AI sẽ làm giảm chất lượng hoặc tạo ra rủi ro không thể chấp nhận. Tự làm. Đây là nơi giá trị không thể thay thế của bạn toả sáng."]
+    },
+    remaining: n => `(còn ${n} câu hỏi)`,
+    answeredOf: (a,t) => `${a} / ${t} đã trả lời`
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let lang = 'en';
+const answers = {};
+const totalQ = 7;
+
+// ── CLICK HANDLERS (delegated) ────────────────────────────────────────────────
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.option-btn');
+  if (!btn) return;
+  const q = btn.dataset.q;
+  btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[q] = parseInt(btn.dataset.score);
+  updateResult();
+});
+
+// ── LANGUAGE ──────────────────────────────────────────────────────────────────
+function setLang(l) {
+  if (l === lang) return;
+  lang = l;
+  document.body.classList.toggle('lang-vi', l === 'vi');
+  document.documentElement.lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-vi').classList.toggle('active', l === 'vi');
+
+  const t = T[l];
+  // Update all static text by id pattern "t-KEY"
+  Object.keys(t).forEach(key => {
+    if (typeof t[key] === 'string') {
+      const el = document.getElementById('t-' + key);
+      if (el) el.textContent = t[key];
+    }
+  });
+
+  updateResult();
+}
+
+// ── RESULT ────────────────────────────────────────────────────────────────────
+function updateResult() {
+  const t = T[lang];
+  const answered = Object.keys(answers).length;
+  const scoreEl   = document.getElementById('score-display');
+  const titleEl   = document.getElementById('verdict-title');
+  const descEl    = document.getElementById('verdict-desc');
+  const fillEl    = document.getElementById('progress-fill');
+  const countEl   = document.getElementById('answered-count');
+
+  countEl.textContent = t.answeredOf(answered, totalQ);
+  fillEl.style.width  = `${(answered / totalQ) * 100}%`;
+
+  if (answered === 0) {
+    scoreEl.textContent = '—';
+    scoreEl.style.color = 'var(--text)';
+    titleEl.textContent = t.verdictDefault[0];
+    titleEl.style.color = 'var(--text)';
+    descEl.textContent  = t.verdictDefault[1];
+    fillEl.style.background = 'var(--accent)';
+    return;
+  }
+
+  const total = Object.values(answers).reduce((a,b) => a+b, 0);
+  scoreEl.textContent = total > 0 ? `+${total}` : `${total}`;
+
+  let color, key;
+  if      (total >= 8)  { color = 'var(--ai)';    key = 'ai'; }
+  else if (total >= 3)  { color = 'var(--collab)'; key = 'collab'; }
+  else if (total >= -2) { color = 'var(--human)';  key = 'human'; }
+  else                  { color = 'var(--skip)';   key = 'skip'; }
+
+  const [vtitle, vdesc] = t.verdicts[key];
+  let finalDesc = vdesc;
+  if (answered < totalQ) finalDesc += ' ' + t.remaining(totalQ - answered);
+
+  scoreEl.style.color  = color;
+  titleEl.style.color  = color;
+  fillEl.style.background = color;
+  titleEl.textContent  = vtitle;
+  descEl.textContent   = finalDesc;
+}
+
+function resetAll() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.querySelectorAll('.option-btn.selected').forEach(b => b.classList.remove('selected'));
+  updateResult();
+}
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.phase').forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.1}s`;
+  obs.observe(el);
+});
+</script>
+
+</body>
+</html>
